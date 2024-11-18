@@ -1,0 +1,146 @@
+import pandas as pd
+import scipy.stats
+import matplotlib.pyplot as plt
+
+# reading file
+dfSpotifyData = None
+
+# Setting the contents of the csv file as a variable
+dfSpotifyData = pd.read_csv('Spotify_data.csv')
+
+# Checking to see if it is stored by printing the contents
+print(dfSpotifyData)
+
+# Calculate the Descriptive Statistics (average, median, standard deviation, and quartiles)
+# This is only for the category music_recc_rating since it is the only numeric data
+descSpotifyData = dfSpotifyData.describe()
+
+# Checking to see if the descriptive data is stored properly
+print(descSpotifyData)
+
+# Sets the age groups to 0
+age_count_6_12 = 0
+age_count_12_20 = 0
+age_count_20_35 = 0
+age_count_35_60 = 0
+age_count_60_up = 0
+
+# Goes through each age in the df and counts how many times each age group occurs
+for age in dfSpotifyData["Age"]:
+     if age == "6-12":
+          age_count_6_12 += 1
+     if age == "12-20":
+          age_count_12_20 += 1
+     if age == "20-35":
+          age_count_20_35 += 1
+     if age == "35-60":
+          age_count_35_60 += 1
+     if age == "60+":
+          age_count_60_up += 1
+
+# Checking to see if the counts are correct, should add up to 520
+print(age_count_6_12)
+print(age_count_12_20)
+print(age_count_20_35)
+print(age_count_35_60)
+print(age_count_60_up)
+
+# Gets the age groups into a list for later use
+ages_Y_values = []
+ages_Y_values.append(age_count_6_12)
+ages_Y_values.append(age_count_12_20)
+ages_Y_values.append(age_count_20_35)
+ages_Y_values.append(age_count_35_60)
+ages_Y_values.append(age_count_60_up)
+
+# Checking to see if the list is correct
+print(ages_Y_values)
+
+# Creating a bar graph to visualize the number of users per age group
+age_Xlabels = ['6-12', '12-20', '20-35', '35-60', '60+']
+plt.bar(age_Xlabels, ages_Y_values)
+plt.xlabel('Age Groups')
+plt.ylabel('Number of People')
+plt.title('Age Distribution Among Spotify Users')
+plt.show()
+
+# Plot in a chart some of your columns ( At least 5 charts )
+dfSpotifyData[['fav_music_genre', 'Gender', 'Age']]
+
+dfSpotifyData[['music_time_slot', 'Gender', 'music_Influencial_mood', 'music_lis_frequency']]
+
+dfSpotifyData[
+    ['spotify_subscription_plan', 'premium_sub_willingness', 'preffered_premium_plan', 'preferred_listening_content',
+     'music_lis_frequency']]
+
+dfSpotifyData[['Gender', 'spotify_usage_period', 'spotify_listening_device', 'spotify_subscription_plan',
+               'premium_sub_willingness']]
+
+dfSpotifyData[['Gender', 'Age', 'spotify_listening_device', 'music_expl_method', 'premium_sub_willingness']]
+
+dfSpotifyData[
+    ['Gender', 'Age', 'spotify_listening_device', 'pod_lis_frequency', 'fav_pod_genre', 'preffered_pod_format',
+     'preffered_pod_duration', 'pod_variety_satisfaction']]
+
+# calculate the Pearson and Spearman correlation for some columns in your dataset.
+# You need at least 2 pairs of correlated stats.
+
+prvalue = 0 # Pearson R-value
+ppvalue = 1 # Pearson P-value
+
+scvalue = 0 # Spearman Coefficient value
+spvalue = 1 # Spearman P-value
+
+slope = 0 # slope for Pearson linear regression
+intercept = 0 # intercept for Pearson linear regression
+
+
+# Created total value for pearson, then called individual values
+total_value_pear = scipy.stats.pearsonr(dfSpotifyData.fav_music_genre(), dfSpotifyData.age())
+pr_value = total_value_pear[0]
+pp_value = total_value_pear[1]
+
+# Created total value for pearson, then called individual values
+total_value_pear = scipy.stats.pearsonr(dfSpotifyData.music_time_slot(), dfSpotifyData.music_Influencial_mood())
+prvalue = total_value_pear[0]
+ppvalue = total_value_pear[1]
+
+# Created total value for spearman and called individual values
+total_value_spear = scipy.stats.spearmanr(dfSpotifyData.fav_music_genre(), dfSpotifyData.age())
+sc_value = total_value_spear[0]
+sp_value = total_value_spear[1]
+
+# Created total value for spearman and called individual values
+total_value_spear = scipy.stats.spearmanr(dfSpotifyData.music_time_slot(), dfSpotifyData.music_Influencial_mood())
+scvalue = total_value_spear[0]
+spvalue = total_value_spear[1]
+
+# Created the total value for linear regression, then called individual values
+total_value_LR = scipy.stats.linregress(dfSpotifyData.fav_music_genre(), dfSpotifyData.age())
+slope = total_value_LR[0]
+intercept = total_value_LR[1]
+
+# Created the total value for linear regression, then called individual values
+total_value_LR = scipy.stats.linregress(dfSpotifyData.music_time_slot(), dfSpotifyData.music_Influencial_mood())
+slope = total_value_LR[0]
+intercept = total_value_LR[1]
+
+# This is to display a scatter plot of the data and the linear reg. line
+newY = [slope * xi + intercept for xi in dfSpotifyData.fav_music_genre] #Calculates Y for the Linear Regression
+plt.scatter(dfSpotifyData.fav_music_genre, dfSpotifyData.age, label='Original Data')
+plt.plot(dfSpotifyData.marketing, newY, 'r', label='Linear Reg.')
+plt.legend()
+plt.show()
+
+# This is to display a scatter plot of the data and the linear reg. line
+newY = [slope * xi + intercept for xi in dfSpotifyData.music_time_slot] #Calculates Y for the Linear Regression
+plt.scatter(dfSpotifyData.music_time_slot, dfSpotifyData.music_Influencial_mood, label='Original Data')
+plt.plot(dfSpotifyData.marketing, newY, 'r', label='Linear Reg.')
+plt.legend()
+plt.show()
+
+
+
+# You are expected to add text (using markdown) and explain your choices and rationale. Use the markdown language to better format your text to be easier to follow.
+# You also need to reflect on your results (using markdown). What do they mean for your dataset? What findings or conclusions can you take? Did you discover anything interesting on it?
+# Were the results what you expected?
